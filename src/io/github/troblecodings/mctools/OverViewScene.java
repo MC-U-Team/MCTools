@@ -17,61 +17,53 @@
 package io.github.troblecodings.mctools;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.file.*;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
+import com.sun.nio.zipfs.*;
+
 import io.github.troblecodings.mctools.Settings.StringSetting;
-import io.github.troblecodings.mctools.jfxtools.StyledLabel;
+import io.github.troblecodings.mctools.jfxtools.*;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 
 /**
  * @author MrTroble
  *
  */
-public class OverViewScene extends Scene implements Runnable{
+public class OverViewScene extends Scene implements Runnable {
 
 	private TextArea area;
+	private String data;
 	
 	public OverViewScene() {
 		super(new GridPane());
 		area = new TextArea();
-		
+
 		GridPane pane = (GridPane) this.getRoot();
 		pane.setAlignment(Pos.CENTER);
+		pane.setVgap(15);
+		pane.setHgap(15);
 
 		String[] directorys = Settings.getSetting(StringSetting.WORK_SPACE).split(Pattern.quote("\\"));
 		StyledLabel label = new StyledLabel(directorys[directorys.length - 1]);
+		label.setTextFill(Color.BLUE);
 		pane.add(label, 0, 0);
-		
-		area.appendText("Start build");
+
+		area.appendText("Start build!\n\r");
 		area.setEditable(false);
 		pane.add(area, 0, 1);
 		new Thread(this).start();
-	}
-
-	private Path findModMain(Path path) {
-		try {
-			return Files.find(path, 15, (pth, atr) -> {
-				if (pth.getFileName().endsWith(".java")) {
-					try {
-						return new String(Files.readAllBytes(pth)).contains("@Mod");
-					} catch (IOException e) {
-						ExceptionDialog dia = new ExceptionDialog(e);
-						dia.show();
-					}
-				}
-				return false;
-			}).findFirst().get();
-		} catch (IOException e) {
-			ExceptionDialog dia = new ExceptionDialog(e);
-			dia.show();
-		}
-		return null;
+		
+		StyledButton back = new StyledButton("Switch workspace");
+		back.setOnAction(evt -> UIApp.setScene(new SetupScene()));
+		pane.add(back, 0, 5);
 	}
 
 	@Override
@@ -94,14 +86,61 @@ public class OverViewScene extends Scene implements Runnable{
 			int i = process.waitFor();
 			sc.close();
 			Platform.runLater(() -> afterCompile(i));
-		} catch (IOException | InterruptedException e) {
-			Platform.runLater(() -> { ExceptionDialog dia = new ExceptionDialog(e);
-			dia.show();});
+		} catch (Throwable e) {
+			Platform.runLater(() -> {
+				ExceptionDialog dia = new ExceptionDialog(e);
+				dia.show();
+			});
 		}
 	}
 
 	private void afterCompile(int i) {
-		area.appendText("Finished! Code: " + i + "\n\r");
+		if (i != 0) {
+			area.appendText("Failed! Code: " + i + "\n\r");
+			return;
+		}
+		area.appendText("Success! Gathering information!\n\r");
+		Path path = Paths.get(Settings.getSetting(StringSetting.WORK_SPACE), "build/libs");
+		try {
+			Files.list(path).findFirst().ifPresent(pth -> {
+				try {
+					Map<String, String> env = new HashMap<>();
+					env.put("create", "true");
+					
+					URI uri = URI.create("jar:file:/" + pth.toString().replace("\\", "/"));
+					FileSystem fs = null;
+					try { fs = FileSystems.getFileSystem(uri); } catch (Exception e) {
+						if(fs == null) fs = FileSystems.newFileSystem(uri, env, null);
+					}
+					this.data = new String(Files.readAllBytes(fs.getPath("META-INF/mods.toml")));
+					this.init();
+				} catch (Throwable e) {
+					ExceptionDialog dia = new ExceptionDialog(e);
+					dia.show();
+				}
+			});
+		} catch (Throwable e) {
+			ExceptionDialog dia = new ExceptionDialog(e);
+			dia.show();
+		}
 	}
 	
- }
+	private void init() {
+		//area.setVisible(false);
+		
+		GridPane pane = new GridPane();
+		((GridPane)this.getRoot()).add(pane, 1, 1);
+		pane.setHgap(15);
+		pane.setVgap(15);
+		pane.add(new StyledLabel("Mod ID"), 0, 0);
+		pane.add(new StyledLabel(find("modId")), 1, 0);
+		pane.add(new StyledLabel("Name"), 0, 1);
+		pane.add(new StyledLabel(find("displayName")), 1, 1);
+		
+	}
+	
+	private String find(String id) {
+		return this.data.split(id)[1].split("\"")[1];
+	}
+
+}

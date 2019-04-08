@@ -28,6 +28,8 @@ public class UIApp extends Application{
 	
 	public static void setScene(Scene sc) {
 		stage.setScene(sc);
+		stage.setMaximized(false);
+		stage.setMaximized(true);
 	}
 	
 	public static void main(String[] args) throws Throwable {
