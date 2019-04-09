@@ -1,6 +1,7 @@
 package io.github.troblecodings.mctools;
 
 import io.github.troblecodings.mctools.Settings.StringSetting;
+import io.github.troblecodings.mctools.scenes.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;

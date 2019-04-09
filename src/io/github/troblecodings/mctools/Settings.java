@@ -54,11 +54,11 @@ public class Settings {
 		flush();
 	}
 	
-	enum BooleanSetting {
+	public enum BooleanSetting {
 		
 	}
 	
-	enum StringSetting {
+	public enum StringSetting {
 		WORK_SPACE
 	}
 	

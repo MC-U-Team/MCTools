@@ -14,26 +14,18 @@
  * the License.
  ******************************************************************************/
 
-package io.github.troblecodings.mctools;
+package io.github.troblecodings.mctools.scenes;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.nio.file.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
+import io.github.troblecodings.mctools.*;
 import io.github.troblecodings.mctools.Settings.StringSetting;
-import io.github.troblecodings.mctools.jfxtools.StyledButton;
-import io.github.troblecodings.mctools.jfxtools.StyledLabel;
+import io.github.troblecodings.mctools.jfxtools.*;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -42,21 +34,13 @@ import javafx.scene.paint.Color;
  * @author MrTroble
  *
  */
-public class OverViewScene extends Scene implements Runnable {
+public class OverViewScene extends BasicScene implements Runnable {
 
 	private TextArea area;
 	private String data;
-	private String modid;
 	
-	public OverViewScene() {
-		super(new GridPane());
-		area = new TextArea();
-
-		GridPane pane = (GridPane) this.getRoot();
-		pane.setAlignment(Pos.CENTER);
-		pane.setVgap(15);
-		pane.setHgap(15);
-
+	@Override
+	protected void init(GridPane pane) {
 		String[] directorys = Settings.getSetting(StringSetting.WORK_SPACE).split(Pattern.quote("\\"));
 		StyledLabel label = new StyledLabel(directorys[directorys.length - 1]);
 		label.setTextFill(Color.BLUE);
@@ -131,33 +115,16 @@ public class OverViewScene extends Scene implements Runnable {
 		}
 	}
 	
-	private void init() {		
+	private void init() {
 		GridPane pane = new GridPane();
-		((GridPane)this.getRoot()).add(pane, 1, 1);
+		this.pane.add(pane, 1, 1);
 		pane.setHgap(15);
 		pane.setVgap(15);
 		pane.add(new StyledLabel("Mod ID"), 0, 0);
-		pane.add(new StyledLabel(modid = find("modId")), 1, 0);
+		pane.add(new StyledLabel(find("modId")), 1, 0);
 		pane.add(new StyledLabel("Name"), 0, 1);
 		pane.add(new StyledLabel(find("displayName")), 1, 1);
 		
-		area.appendText("Looking for folder structure..." + System.lineSeparator());
-		initFolders("lang", "blockstates", "textures\\blocks", "textures\\items", "textures\\gui", "models\\block", "models\\item");
-	}
-	
-	private void initFolders(String... strings) {
-		for (String string : strings) {
-			Path pth = Paths.get(Settings.getSetting(StringSetting.WORK_SPACE), "src\\main\\resources\\assets\\" + this.modid + "\\" + string);
-			if(!Files.exists(pth)) {
-				area.appendText("creating " + pth.toString() + System.lineSeparator());
-				try {
-					Files.createDirectories(pth);
-				} catch (Throwable e) {
-					ExceptionDialog dia = new ExceptionDialog(e);
-					dia.show();
-				}
-			}
-		}
 	}
 	
 	private String find(String id) {

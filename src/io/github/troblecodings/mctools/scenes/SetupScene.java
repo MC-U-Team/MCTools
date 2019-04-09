@@ -1,40 +1,24 @@
-package io.github.troblecodings.mctools;
+package io.github.troblecodings.mctools.scenes;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
 
+import io.github.troblecodings.mctools.*;
 import io.github.troblecodings.mctools.Settings.StringSetting;
-import io.github.troblecodings.mctools.jfxtools.StyledButton;
-import io.github.troblecodings.mctools.jfxtools.StyledLabel;
-import io.github.troblecodings.mctools.jfxtools.StyledTextfield;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import io.github.troblecodings.mctools.jfxtools.*;
+import javafx.event.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 
-public class SetupScene extends Scene implements EventHandler<ActionEvent>{
+public class SetupScene extends BasicScene implements EventHandler<ActionEvent>{
 
 	private TextField workspace_path;
 	private Label error;
 	
-	public SetupScene() {
-		super(new GridPane());
-		
-		GridPane pane = (GridPane) this.getRoot();
-		pane.setAlignment(Pos.CENTER);
-		pane.setVgap(15);
-		pane.setHgap(15);
-		
+	@Override
+	protected void init(GridPane pane) {
 		workspace_path = new StyledTextfield("Workspace location");
 		pane.add(workspace_path, 0, 0);
 
