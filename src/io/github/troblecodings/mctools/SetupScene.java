@@ -1,14 +1,23 @@
 package io.github.troblecodings.mctools;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import io.github.troblecodings.mctools.Settings.StringSetting;
-import io.github.troblecodings.mctools.jfxtools.*;
+import io.github.troblecodings.mctools.jfxtools.StyledButton;
+import io.github.troblecodings.mctools.jfxtools.StyledLabel;
+import io.github.troblecodings.mctools.jfxtools.StyledTextfield;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.event.*;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
@@ -70,9 +79,7 @@ public class SetupScene extends Scene implements EventHandler<ActionEvent>{
 		}
 		
 		try {
-			if(!Files.list(path).anyMatch(pth -> {
-				return pth.getFileName().toString().contentEquals("build.gradle");
-			})) {
+			if(Files.list(path).noneMatch(pth -> { return pth.getFileName().toString().contentEquals("build.gradle"); })) {
 				error.setText("Error: No build.gradle found!");
 				return;
 			}

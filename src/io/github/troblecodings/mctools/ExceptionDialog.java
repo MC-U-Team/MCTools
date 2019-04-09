@@ -16,7 +16,8 @@
 
 package io.github.troblecodings.mctools;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
 
 /**
  * @author MrTroble
