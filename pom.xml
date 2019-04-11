@@ -20,6 +20,12 @@
 			<artifactId>json</artifactId>
 			<version>20180813</version>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.5.6</version>
+			<type>pom</type>
+		</dependency>
 	</dependencies>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -35,6 +41,14 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<manifestSection>
+								<name>Premain-Class</name>
+								<manifestEntries>UIApp</manifestEntries>
+							</manifestSection>
+						</manifest>
+					</archive>
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>

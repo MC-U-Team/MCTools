@@ -16,6 +16,9 @@
 
 package io.github.troblecodings.mctools;
 
+import java.io.*;
+
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 
@@ -30,11 +33,30 @@ public class ExceptionDialog extends Alert{
 		this.setTitle("Exception");
 		this.setHeaderText("Error: An exception was raised");
 		
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		th.printStackTrace(pw);
+		String exceptionText = sw.toString();
+		
 		TextArea area = new TextArea();
 		area.setEditable(false);
-		area.setText(th.toString());
+		area.setText(exceptionText);
 		
 		this.getDialogPane().setExpandableContent(area);
 	}
 	
+	public static void stacktrace(Throwable exception) {
+		Platform.runLater(() -> {
+			ExceptionDialog dia = new ExceptionDialog(exception);
+			dia.show();
+		});
+	}
+	
+	public static void stacktrace(Throwable exception, String str) {
+		Platform.runLater(() -> {
+			ExceptionDialog dia = new ExceptionDialog(exception);
+			dia.setHeaderText(str);
+			dia.show();
+		});
+	}
 }

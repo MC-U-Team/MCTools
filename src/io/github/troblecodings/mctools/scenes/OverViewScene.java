@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import io.github.troblecodings.mctools.*;
+import io.github.troblecodings.mctools.JarTools.Callback;
 import io.github.troblecodings.mctools.Settings.StringSetting;
 import io.github.troblecodings.mctools.jfxtools.*;
 import javafx.application.Platform;
@@ -34,11 +35,10 @@ import javafx.scene.paint.Color;
  * @author MrTroble
  *
  */
-public class OverViewScene extends BasicScene implements Runnable {
+public class OverViewScene extends BasicScene implements Callback{
 
-	private TextArea area;
-	private String data;
-	
+	private static TextArea area;
+
 	@Override
 	protected void init(GridPane pane) {
 		String[] directorys = Settings.getSetting(StringSetting.WORK_SPACE).split(Pattern.quote("\\"));
@@ -46,89 +46,60 @@ public class OverViewScene extends BasicScene implements Runnable {
 		label.setTextFill(Color.BLUE);
 		pane.add(label, 0, 0);
 
+		area = new TextArea();
 		area.appendText("Start build!\n\r");
 		area.setEditable(false);
 		pane.add(area, 0, 1);
-		new Thread(this).start();
+		JarTools.start(this);
 		
 		StyledButton back = new StyledButton("Switch workspace");
 		back.setOnAction(evt -> UIApp.setScene(new SetupScene()));
 		pane.add(back, 0, 5);
 	}
-
-	@Override
-	public void run() {
-		try {
-			ProcessBuilder builder = new ProcessBuilder("powershell", ".\\gradlew", "build");
-			builder.directory(new File(Settings.getSetting(StringSetting.WORK_SPACE)));
-			Process process = builder.start();
-			Scanner sc = new Scanner(process.getInputStream());
-			sc.useDelimiter("\n\r");
-			sc.forEachRemaining(line -> {
-				Platform.runLater(() -> area.appendText(line + "\n\r"));
-			});
-			sc.close();
-			sc = new Scanner(process.getErrorStream());
-			sc.useDelimiter("\n\r");
-			sc.forEachRemaining(line -> {
-				Platform.runLater(() -> area.appendText(line + "\n\r"));
-			});
-			int i = process.waitFor();
-			sc.close();
-			Platform.runLater(() -> afterCompile(i));
-		} catch (Throwable e) {
-			Platform.runLater(() -> {
-				ExceptionDialog dia = new ExceptionDialog(e);
-				dia.show();
-			});
-		}
-	}
-
-	private void afterCompile(int i) {
-		if (i != 0) {
-			area.appendText("Failed! Code: " + i + "\n\r");
-			return;
-		}
-		area.appendText("Success! Gathering information!\n\r");
-		Path path = Paths.get(Settings.getSetting(StringSetting.WORK_SPACE), "build/libs");
-		try {
-			Files.list(path).findFirst().ifPresent(pth -> {
-				try {
-					Map<String, String> env = new HashMap<>();
-					env.put("create", "true");
-					
-					URI uri = URI.create("jar:file:/" + pth.toString().replace("\\", "/"));
-					FileSystem fs = null;
-					try { fs = FileSystems.getFileSystem(uri); } catch (Exception e) {
-						if(fs == null) fs = FileSystems.newFileSystem(uri, env, null);
-					}
-					this.data = new String(Files.readAllBytes(fs.getPath("META-INF/mods.toml")));
-					this.init();
-				} catch (Throwable e) {
-					ExceptionDialog dia = new ExceptionDialog(e);
-					dia.show();
-				}
-			});
-		} catch (Throwable e) {
-			ExceptionDialog dia = new ExceptionDialog(e);
-			dia.show();
-		}
+		
+	public static void log(Object str) {
+		log(str.toString());
 	}
 	
-	private void init() {
+	public static void log(Object str, Object st) {
+		log(str.toString() + "=" + st.toString());
+	}
+	
+	public static void log(String str) {
+		Platform.runLater(() -> area.appendText(str + System.lineSeparator()));
+	}
+
+	@Override
+	public void runAfterCompile(String modid, String name) {
 		GridPane pane = new GridPane();
 		this.pane.add(pane, 1, 1);
 		pane.setHgap(15);
 		pane.setVgap(15);
 		pane.add(new StyledLabel("Mod ID"), 0, 0);
-		pane.add(new StyledLabel(find("modId")), 1, 0);
+		pane.add(new StyledLabel(modid), 1, 0);
 		pane.add(new StyledLabel("Name"), 0, 1);
-		pane.add(new StyledLabel(find("displayName")), 1, 1);
+		pane.add(new StyledLabel(name), 1, 1);
+				
+		StyledButton lang = new StyledButton("Localisation");
+		lang.setOnAction(evt -> UIApp.setScene(new LangScene(this)));
+		pane.add(lang, 0, 2);
 		
-	}
-	
-	private String find(String id) {
-		return this.data.split(id)[1].split("\"")[1];
-	}
+		StyledButton blocks = new StyledButton("Blocks");
+		blocks.setOnAction(evt -> {
+			
+		});
+		pane.add(blocks, 1, 2);
 
+		StyledButton items = new StyledButton("Items");
+		items.setOnAction(evt -> {
+			
+		});
+		pane.add(items, 0, 3);
+		
+		StyledButton gui = new StyledButton("Gui");
+		gui.setOnAction(evt -> {
+			
+		});
+		pane.add(gui, 1, 3);
+	}
 }

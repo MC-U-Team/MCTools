@@ -16,39 +16,31 @@
 
 package io.github.troblecodings.mctools.scenes;
 
-import io.github.troblecodings.mctools.jfxtools.StyledButton;
-import javafx.event.*;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
+import java.net.*;
+import java.nio.file.*;
+
+import io.github.troblecodings.mctools.*;
 
 /**
  * @author MrTroble
  *
  */
-public class BasicScene extends Scene{
+public class LangScene extends BasicScene implements Runnable {
 
-	protected GridPane pane;
-	private StyledButton backbutton;
-	
-	public BasicScene() {
-		super(new GridPane());
-		
-		this.pane = (GridPane) this.getRoot();
-		this.pane.setVgap(15);
-		this.pane.setHgap(15);
-		this.pane.setAlignment(Pos.CENTER);
-		
-		init(this.pane);
+	private final OverViewScene scene;
+
+	/**
+	 * @param overview scene
+	 */
+	public LangScene(OverViewScene scene) {
+		this.scene = scene;
+		this.setOnBackPressed(evt -> UIApp.setScene(scene));
+
+		new Thread(this).start();
 	}
 
-	public void setOnBackPressed(EventHandler<ActionEvent> run) {
-		if(this.backbutton == null) {
-			this.backbutton = new StyledButton("Back");
-			this.pane.add(this.backbutton, 0, this.pane.impl_getRowCount());
-		}
-		this.backbutton.setOnAction(run);
+	@Override
+	public void run() {
 	}
-	
-	protected void init(GridPane pane) {}
+
 }
