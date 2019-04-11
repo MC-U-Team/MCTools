@@ -16,9 +16,13 @@
 
 package io.github.troblecodings.mctools;
 
-import java.io.File;
+import java.io.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.*;
 import java.nio.file.*;
+import java.nio.file.FileSystem;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -32,6 +36,10 @@ import javafx.application.Platform;
  */
 public class JarTools extends Thread {
 
+	private static final String BLOCK_CLASS_LOCATION = "net.minecraft.block.Block";
+	private static final String ITEM_CLASS_LOCATION = "net.minecraft.item.Item";
+	private static final String MOD_CLASS_LOCATION = "net.minecraftforge.fml.common.Mod";
+	
 	private static JarTools INSTANCE = new JarTools();
 	private static Callback callback;
 	
@@ -41,15 +49,43 @@ public class JarTools extends Thread {
 	//private String manifest;
 	private String modid;
 	private String name;
+	private String mc_version;
+	private Class<?> BLOCK;
+	private Class<?> ITEM;
+	private Class<?> MAIN;
+	private Class<?> MOD;
 	private final ArrayList<Class<?>> LOADED_CLASSES = new ArrayList<Class<?>>();
 
+	private HashMap<String, String> METHOD_MAPPING = new HashMap<String, String>();
+	
 	private JarTools() {}
 	
 	public static void start(Callback cb) {
 		callback = cb;
 		INSTANCE.start();
 	}
+	
+	public static Stream<Class<?>> find(Class<?> clzz){
+		return INSTANCE.LOADED_CLASSES.stream().filter(cls -> clzz.isAssignableFrom(cls));
+	}
+	
+	public static String getMapping(String str) {
+		return INSTANCE.METHOD_MAPPING.get(str);
+	}
+	
+	public static String getModID() {
+		return INSTANCE.modid;
+	}
 		
+	public static Class<?> getBLOCK() {
+		return INSTANCE.BLOCK;
+	}
+
+	public static Class<?> getITEM() {
+		return INSTANCE.ITEM;
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
 		try {
@@ -80,6 +116,36 @@ public class JarTools extends Thread {
 				OverViewScene.log("Failed! Code: " + i);
 				return;
 			}
+// GET MAPPING
+			Path mcp = Paths.get("C:\\Users\\" + System.getenv("USERNAME") + "\\.gradle\\caches\\modules-2\\files-2.1\\de.oceanlabs.mcp");
+			Files.find(mcp, 20, (mptm, attr) -> mptm.toString().endsWith(".zip")).sorted((pth1, pth2) -> 
+			{
+				try {
+					return Files.readAttributes(pth2, BasicFileAttributes.class).lastModifiedTime().compareTo(Files.readAttributes(pth1, BasicFileAttributes.class).lastModifiedTime());
+				} catch (IOException e) {
+					ExceptionDialog.stacktrace(e);
+				}
+				return 0;
+			}).findFirst().ifPresent(zip -> {
+				URI uri = URI.create("jar:file:/" + zip.toString().replace("\\", "/"));
+				OverViewScene.log(uri);
+				FileSystem mcpfs = null;
+				try{
+					mcpfs = FileSystems.getFileSystem(uri);
+				} catch( Throwable th) {
+					try {
+						mcpfs = FileSystems.newFileSystem(uri, env);
+					} catch (IOException e) {
+						ExceptionDialog.stacktrace(e);
+					}
+				}
+				try {
+					Files.readAllLines(mcpfs.getPath("methods.csv")).forEach(str -> METHOD_MAPPING.put(str.split(",")[0], str.split(",")[1]));
+				} catch (IOException e) {
+					ExceptionDialog.stacktrace(e);
+				}
+			});
+			
 			OverViewScene.log("Success! Gathering information!");
 // COMPILE END
 // START DISCOVERY			
@@ -117,6 +183,18 @@ public class JarTools extends Thread {
 			}
 			URLClassLoader loader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]),
 					this.getClass().getClassLoader());
+			
+			// PRE LOAD CERTAIN CLASSES
+			this.BLOCK = loader.loadClass(BLOCK_CLASS_LOCATION);
+			this.ITEM = loader.loadClass(ITEM_CLASS_LOCATION);
+			this.MOD = loader.loadClass(MOD_CLASS_LOCATION);
+
+			for (Method bl : this.BLOCK.getMethods()) {
+				OverViewScene.log(bl);
+			}
+			OverViewScene.log(this.ITEM);
+			
+			// LOAD ALL MOD RELATED CLASSES
 			Path path = this.fs.getRootDirectories().iterator().next();
 			Files.find(path, 20, (pth, attr) -> {
 				return pth.toString().endsWith(".class");
@@ -130,6 +208,7 @@ public class JarTools extends Thread {
 					ExceptionDialog.stacktrace(e, "Couldn't load class " + str + "\n\rMissing library?");
 				}
 			});
+			LOADED_CLASSES.stream().filter(cls -> cls.isAnnotationPresent((Class<? extends Annotation>) MOD)).findFirst().ifPresent(cl -> MAIN = cl);
 		} catch (Throwable e) {
 			ExceptionDialog.stacktrace(e);
 		}
