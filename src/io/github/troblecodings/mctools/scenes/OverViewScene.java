@@ -16,10 +16,6 @@
 
 package io.github.troblecodings.mctools.scenes;
 
-import java.io.File;
-import java.net.URI;
-import java.nio.file.*;
-import java.util.*;
 import java.util.regex.Pattern;
 
 import io.github.troblecodings.mctools.*;
@@ -53,8 +49,8 @@ public class OverViewScene extends BasicScene implements Callback{
 		JarTools.start(this);
 		
 		StyledButton back = new StyledButton("Switch workspace");
-		back.setOnAction(evt -> UIApp.setScene(new SetupScene()));
-		pane.add(back, 0, 5);
+		back.setOnAction(evt -> UIApp.setScene(new SetupScene(this)));
+		pane.add(back, 0, 2);
 	}
 		
 	public static void log(Object str) {

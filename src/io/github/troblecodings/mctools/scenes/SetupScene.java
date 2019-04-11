@@ -17,6 +17,16 @@ public class SetupScene extends BasicScene implements EventHandler<ActionEvent>{
 	private TextField workspace_path;
 	private Label error;
 	
+	public SetupScene() {}
+	
+	/**
+	 * @param back overview scene
+	 */
+	@SuppressWarnings("deprecation")
+	public SetupScene(OverViewScene scene){
+		this.setOnBackPressed(evt -> UIApp.setScene(scene), 1, pane.impl_getColumnCount() - 1);
+	}
+	
 	@Override
 	protected void init(GridPane pane) {
 		workspace_path = new StyledTextfield("Workspace location");
@@ -37,7 +47,7 @@ public class SetupScene extends BasicScene implements EventHandler<ActionEvent>{
 		error = new StyledLabel("");
 		error.setTextFill(Color.RED);
 		pane.add(error, 0, 2);
-		
+				
 		apply.requestFocus();
 	}
 

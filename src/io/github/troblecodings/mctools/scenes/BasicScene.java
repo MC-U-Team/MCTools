@@ -29,7 +29,7 @@ import javafx.scene.layout.GridPane;
 public class BasicScene extends Scene{
 
 	protected GridPane pane;
-	private StyledButton backbutton;
+	protected StyledButton backbutton;
 	
 	public BasicScene() {
 		super(new GridPane());
@@ -42,12 +42,17 @@ public class BasicScene extends Scene{
 		init(this.pane);
 	}
 
-	public void setOnBackPressed(EventHandler<ActionEvent> run) {
+	public void setOnBackPressed(EventHandler<ActionEvent> run, int x, int y) {
 		if(this.backbutton == null) {
 			this.backbutton = new StyledButton("Back");
-			this.pane.add(this.backbutton, 0, this.pane.impl_getRowCount());
+			this.pane.add(this.backbutton, x, y);
 		}
 		this.backbutton.setOnAction(run);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void setOnBackPressed(EventHandler<ActionEvent> run) {
+		setOnBackPressed(run, 0, this.pane.impl_getRowCount());
 	}
 	
 	protected void init(GridPane pane) {}

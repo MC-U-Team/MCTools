@@ -16,31 +16,27 @@
 
 package io.github.troblecodings.mctools.scenes;
 
-import java.net.*;
-import java.nio.file.*;
-
-import io.github.troblecodings.mctools.*;
+import io.github.troblecodings.mctools.UIApp;
+import javafx.scene.layout.GridPane;
 
 /**
  * @author MrTroble
  *
  */
-public class LangScene extends BasicScene implements Runnable {
+public class LangScene extends BasicScene {
 
 	private final OverViewScene scene;
-
+	
 	/**
 	 * @param overview scene
 	 */
 	public LangScene(OverViewScene scene) {
 		this.scene = scene;
-		this.setOnBackPressed(evt -> UIApp.setScene(scene));
-
-		new Thread(this).start();
 	}
 
 	@Override
-	public void run() {
+	protected void init(GridPane pane) {
+		
+		this.setOnBackPressed(evt -> UIApp.setScene(scene));
 	}
-
 }
