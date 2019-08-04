@@ -16,14 +16,10 @@
 
 package io.github.troblecodings.mctools.scenes;
 
-import java.util.regex.Pattern;
-
-import io.github.troblecodings.mctools.*;
-import io.github.troblecodings.mctools.JarTools.Callback;
-import io.github.troblecodings.mctools.Settings.StringSetting;
-import io.github.troblecodings.mctools.jfxtools.*;
-import javafx.application.Platform;
-import javafx.scene.control.TextArea;
+import io.github.troblecodings.mctools.Cache;
+import io.github.troblecodings.mctools.UIApp;
+import io.github.troblecodings.mctools.jfxtools.StyledButton;
+import io.github.troblecodings.mctools.jfxtools.StyledLabel;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
@@ -31,71 +27,49 @@ import javafx.scene.paint.Color;
  * @author MrTroble
  *
  */
-public class OverViewScene extends BasicScene implements Callback{
+public class OverViewScene extends BasicScene {
 
-	private static TextArea area;
-
+	private String name = "undefined";
+	
 	@Override
-	protected void init(GridPane pane) {
-		String[] directorys = Settings.getSetting(StringSetting.WORK_SPACE).split(Pattern.quote("\\"));
-		StyledLabel label = new StyledLabel(directorys[directorys.length - 1]);
+	protected void preinit() throws Throwable {
+		this.name = Cache.getModID();
+	}
+	
+	@Override
+	protected void init(GridPane rootpane) {
+		StyledLabel label = new StyledLabel(name.toUpperCase());
 		label.setTextFill(Color.BLUE);
-		pane.add(label, 0, 0);
+		rootpane.add(label, 0, 0);
 
-		area = new TextArea();
-		area.appendText("Start build!\n\r");
-		area.setEditable(false);
-		pane.add(area, 0, 1);
-		JarTools.start(this);
-		
-		StyledButton back = new StyledButton("Switch workspace");
-		back.setOnAction(evt -> UIApp.setScene(new SetupScene(this)));
-		pane.add(back, 0, 2);
-	}
-		
-	public static void log(Object str) {
-		log(str.toString());
-	}
-	
-	public static void log(Object str, Object st) {
-		log(str.toString() + "=" + st.toString());
-	}
-	
-	public static void log(String str) {
-		Platform.runLater(() -> area.appendText(str + System.lineSeparator()));
-	}
-
-	@Override
-	public void runAfterCompile(String modid, String name) {
 		GridPane pane = new GridPane();
-		this.pane.add(pane, 1, 1);
+		this.pane.add(pane, 0, 1);
 		pane.setHgap(15);
 		pane.setVgap(15);
-		pane.add(new StyledLabel("Mod ID"), 0, 0);
-		pane.add(new StyledLabel(modid), 1, 0);
-		pane.add(new StyledLabel("Name"), 0, 1);
-		pane.add(new StyledLabel(name), 1, 1);
 				
 		StyledButton lang = new StyledButton("Localisation");
 		lang.setOnAction(evt -> UIApp.setScene(new LangScene(this)));
-		pane.add(lang, 0, 2);
+		pane.add(lang, 0, 0);
 		
 		StyledButton blocks = new StyledButton("Blocks");
 		blocks.setOnAction(evt -> {
 			
 		});
-		pane.add(blocks, 1, 2);
+		pane.add(blocks, 1, 0);
 
 		StyledButton items = new StyledButton("Items");
 		items.setOnAction(evt -> {
 			
 		});
-		pane.add(items, 0, 3);
+		pane.add(items, 0, 1);
 		
 		StyledButton gui = new StyledButton("Gui");
 		gui.setOnAction(evt -> {
 			
 		});
-		pane.add(gui, 1, 3);
+		pane.add(gui, 1, 1);
+		
+		this.setOnBackPressed("Switch workspace", evt -> UIApp.setScene(new SetupScene(this)), 0, 2);
 	}
+		
 }

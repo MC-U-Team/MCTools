@@ -16,8 +16,10 @@
 
 package io.github.troblecodings.mctools.scenes;
 
+import io.github.troblecodings.mctools.jfxtools.ExceptionDialog;
 import io.github.troblecodings.mctools.jfxtools.StyledButton;
-import javafx.event.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -39,15 +41,20 @@ public class BasicScene extends Scene{
 		this.pane.setHgap(15);
 		this.pane.setAlignment(Pos.CENTER);
 		
+		try { preinit(); } catch (Throwable e) { ExceptionDialog.stacktrace(e, "Exception during preinit!"); }
 		init(this.pane);
 	}
 
-	public void setOnBackPressed(EventHandler<ActionEvent> run, int x, int y) {
+	public void setOnBackPressed(String name, EventHandler<ActionEvent> run, int x, int y) {
 		if(this.backbutton == null) {
-			this.backbutton = new StyledButton("Back");
+			this.backbutton = new StyledButton(name);
 			this.pane.add(this.backbutton, x, y);
 		}
 		this.backbutton.setOnAction(run);
+	}
+	
+	public void setOnBackPressed(EventHandler<ActionEvent> run, int x, int y) {
+		setOnBackPressed("Back", run, x, y);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -56,4 +63,6 @@ public class BasicScene extends Scene{
 	}
 	
 	protected void init(GridPane pane) {}
+	
+	protected void preinit() throws Throwable {}
 }

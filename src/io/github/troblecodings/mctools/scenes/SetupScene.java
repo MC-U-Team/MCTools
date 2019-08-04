@@ -1,13 +1,24 @@
 package io.github.troblecodings.mctools.scenes;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import io.github.troblecodings.mctools.*;
+import io.github.troblecodings.mctools.Cache;
+import io.github.troblecodings.mctools.Settings;
 import io.github.troblecodings.mctools.Settings.StringSetting;
-import io.github.troblecodings.mctools.jfxtools.*;
-import javafx.event.*;
-import javafx.scene.control.*;
+import io.github.troblecodings.mctools.UIApp;
+import io.github.troblecodings.mctools.jfxtools.StyledButton;
+import io.github.troblecodings.mctools.jfxtools.StyledLabel;
+import io.github.troblecodings.mctools.jfxtools.StyledTextfield;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
@@ -82,7 +93,8 @@ public class SetupScene extends BasicScene implements EventHandler<ActionEvent>{
 			return;
 		}
 		
-		Settings.setSetting(StringSetting.WORK_SPACE, str);
+		Settings.setSetting(StringSetting.WORKSPACE, str);
+		Cache.clearCache();
 		UIApp.setScene(new OverViewScene());
 	}
 	

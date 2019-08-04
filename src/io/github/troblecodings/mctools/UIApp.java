@@ -1,7 +1,11 @@
 package io.github.troblecodings.mctools;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import io.github.troblecodings.mctools.Settings.StringSetting;
-import io.github.troblecodings.mctools.scenes.*;
+import io.github.troblecodings.mctools.scenes.OverViewScene;
+import io.github.troblecodings.mctools.scenes.SetupScene;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
@@ -17,20 +21,21 @@ public class UIApp extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		stage = primaryStage;
 		
-		if(Settings.getSetting(StringSetting.WORK_SPACE) == null) {
+		if(Settings.getSetting(StringSetting.WORKSPACE) == null) {
 			primaryStage.setScene(new SetupScene());
 		} else {
 			primaryStage.setScene(new OverViewScene());
 		}
 		
-	    primaryStage.setMaximized(true);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+	    primaryStage.setHeight(dim.getHeight());
+	    primaryStage.setWidth(dim.getWidth());
 		primaryStage.show();
+		primaryStage.setMaximized(true);
 	}
 	
 	public static void setScene(Scene sc) {
 		stage.setScene(sc);
-		stage.setMaximized(false);
-		stage.setMaximized(true);
 	}
 	
 	public static void main(String[] args) throws Throwable {

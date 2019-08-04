@@ -59,7 +59,7 @@ public class Settings {
 	}
 	
 	public enum StringSetting {
-		WORK_SPACE
+		WORKSPACE
 	}
 	
 }

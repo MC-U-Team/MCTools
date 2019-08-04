@@ -14,9 +14,10 @@
  * the License.
  ******************************************************************************/
 
-package io.github.troblecodings.mctools;
+package io.github.troblecodings.mctools.jfxtools;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;

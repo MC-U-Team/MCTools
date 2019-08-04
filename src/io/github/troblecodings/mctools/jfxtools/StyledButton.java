@@ -17,7 +17,7 @@
 package io.github.troblecodings.mctools.jfxtools;
 
 import io.github.troblecodings.mctools.UIApp;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
 
 /**
  * @author MrTroble
