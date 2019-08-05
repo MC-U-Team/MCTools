@@ -38,7 +38,7 @@ public class Cache {
 		}
 		return modid;
 	}
-
+	
 	private static HashMap<Path, JSONObject> getJsons(@Nullable HashMap<Path, JSONObject> map, final Path path) throws Throwable {
 		if (map == null) {
 			final HashMap<Path, JSONObject> map2 = new HashMap<Path, JSONObject>();
@@ -60,6 +60,11 @@ public class Cache {
 
 	public static HashMap<Path, JSONObject> getItemJsons() throws Throwable {
 		return itemJsons = getJsons(itemJsons, getItemPath());
+	}
+	
+	public static HashMap<Path, JSONObject> addItemJson(Path name, String content) throws Throwable {
+		itemJsons.put(name, new JSONObject(content));
+		return itemJsons;
 	}
 
 /// LANG SECTION
