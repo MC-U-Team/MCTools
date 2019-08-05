@@ -141,7 +141,7 @@ public class LangScene extends BasicScene {
 			
 			JSONObject obj = Cache.getLangJsons().get(path);
 			if(obj == null)
-				obj = Cache.addJson(path).get(path);
+				obj = Cache.addLangJson(path).get(path);
 			obj.toMap().forEach((str, str2) -> {
 				@SuppressWarnings("deprecation")
 				int i = pane.impl_getRowCount();

@@ -2,6 +2,8 @@ package io.github.troblecodings.mctools;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,16 +13,22 @@ import java.util.HashMap;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.sun.istack.internal.Nullable;
+
 import io.github.troblecodings.mctools.Settings.StringSetting;
 import io.github.troblecodings.mctools.jfxtools.ExceptionDialog;
 
 public class Cache {
 
 	private static Path langPath = null;
-	
+	private static Path itemPath = null;
+	private static Path itemTexturePath = null;
+
 	private static String modid = null;
 	private static ArrayList<String> langKeys = null;
+
 	private static HashMap<Path, JSONObject> langJsons = null;
+	private static HashMap<Path, JSONObject> itemJsons = null;
 
 	public static String getModID() throws Throwable {
 		if (modid == null) {
@@ -31,9 +39,30 @@ public class Cache {
 		return modid;
 	}
 
-	public static void clearModIDCache() {
-		modid = null;
+	private static HashMap<Path, JSONObject> getJsons(@Nullable HashMap<Path, JSONObject> map, final Path path) throws Throwable {
+		if (map == null) {
+			final HashMap<Path, JSONObject> map2 = new HashMap<Path, JSONObject>();
+			Files.list(path).forEach(pth -> {
+				try {
+					Reader reader = Files.newBufferedReader(pth, Charset.forName("utf-8"));
+					map2.put(pth, new JSONObject(new JSONTokener(reader)));
+					reader.close();
+				} catch (Throwable e) {
+					ExceptionDialog.stacktrace(e);
+				}
+			});
+			return map2;
+		}
+		return map;
 	}
+	
+/// ITEM SECTION
+
+	public static HashMap<Path, JSONObject> getItemJsons() throws Throwable {
+		return itemJsons = getJsons(itemJsons, getItemPath());
+	}
+
+/// LANG SECTION
 
 	public static ArrayList<String> getLangKeys() throws Throwable {
 		if (langKeys == null) {
@@ -45,34 +74,21 @@ public class Cache {
 	}
 
 	public static HashMap<Path, JSONObject> getLangJsons() throws Throwable {
-		if (langJsons == null) {
-			langJsons = new HashMap<Path, JSONObject>();
-			final Path path = getLangPath();
-			if (Files.exists(path)) {
-				Files.list(path).forEach(pth -> {
-					try {
-						langJsons.put(pth, new JSONObject(new JSONTokener(Files.newBufferedReader(pth))));
-					} catch (Throwable e) {
-						ExceptionDialog.stacktrace(e);
-					}
-				});
-			}
-		}
-		return langJsons;
+		return langJsons = getJsons(langJsons, getLangPath());
 	}
-	
-	public static HashMap<Path, JSONObject> addJson(Path name) throws Throwable{
+
+	public static HashMap<Path, JSONObject> addLangJson(Path name) throws Throwable {
 		JSONObject obj = new JSONObject();
 		langKeys.forEach(str -> obj.put(str, ""));
 		langJsons.put(name, obj);
 		return langJsons;
 	}
-	
+
 	public static void flushLangJsons() {
-		if(langJsons != null) {
+		if (langJsons != null) {
 			langJsons.forEach((pth, obj) -> {
 				try {
-					final BufferedWriter writer = Files.newBufferedWriter(pth);
+					final BufferedWriter writer = Files.newBufferedWriter(pth, Charset.forName("utf-8"));
 					obj.write(writer, 1, 1);
 					writer.close();
 				} catch (IOException e) {
@@ -80,10 +96,6 @@ public class Cache {
 				}
 			});
 		}
-	}
-	
-	public static void clearLangJsons() {
-		langJsons = null;
 	}
 
 	public static ArrayList<String> addLangKey(String key) throws Throwable {
@@ -94,29 +106,66 @@ public class Cache {
 		langJsons.forEach((pth, obj) -> obj.put(key, ""));
 		return langKeys;
 	}
-	
+
+/// PATH SECTION
+
+	private static Path getPath(@Nullable Path cache, final String dir) throws Throwable {
+		if (cache == null) {
+			cache = Paths.get(Settings.getSetting(StringSetting.WORKSPACE),
+					"src\\main\\resources\\assets\\" + Cache.getModID() + "\\" + dir);
+			if (!Files.exists(cache))
+				Files.createDirectories(cache);
+		}
+		return cache;
+	}
+
+	public static Path getLangPath() throws Throwable {
+		return langPath = getPath(langPath, "lang");
+	}
+
+	public static Path getItemPath() throws Throwable {
+		return itemPath = getPath(itemPath, "models\\item");
+	}
+
+	public static Path getItemTexturePath() throws Throwable {
+		return itemTexturePath = getPath(itemTexturePath, "textures\\item");
+	}
+
+/// CLEAR SECTION
+
+	public static void clearLangJsons() {
+		langJsons = null;
+	}
+
 	public static void clearLangKeys() {
 		langKeys = null;
-	}
-	
-	public static Path getLangPath() throws Throwable {
-		if(langPath == null) {
-			langPath =  Paths.get(Settings.getSetting(StringSetting.WORKSPACE),
-					"src\\main\\resources\\assets\\" + Cache.getModID() + "\\lang");
-			if(!Files.exists(langPath))
-				Files.createDirectories(langPath);
-		}
-		return langPath;
 	}
 
 	public static void clearLangPath() {
 		langPath = null;
 	}
-	
+
+	public static void clearItemPath() {
+		itemPath = null;
+	}
+
+	public static void clearItemTexturePath() {
+		itemTexturePath = null;
+	}
+
+	public static void clearModIDCache() {
+		modid = null;
+	}
+
+	/*
+	 * Clears all docs
+	 */
 	public static void clearCache() {
 		clearModIDCache();
 		clearLangJsons();
 		clearLangKeys();
 		clearLangPath();
+		clearItemPath();
+		clearItemTexturePath();
 	}
 }

@@ -58,9 +58,7 @@ public class OverViewScene extends BasicScene {
 		pane.add(blocks, 1, 0);
 
 		StyledButton items = new StyledButton("Items");
-		items.setOnAction(evt -> {
-			
-		});
+		items.setOnAction(evt -> UIApp.setScene(new ItemScene(this)));
 		pane.add(items, 0, 1);
 		
 		StyledButton gui = new StyledButton("Gui");
