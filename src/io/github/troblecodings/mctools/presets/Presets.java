@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Presets {
@@ -13,16 +14,24 @@ public class Presets {
 	
 	static {
 		load("itemblock");
+		load("itemgenerated");
 	}
 	
 	public static void load(String name) {
 		try {
 			String reader = new String(Files.readAllBytes(Paths.get(Presets.class.getResource(name + ".json").toURI())), Charset.forName("utf-8"));
 			String[] rg = reader.split("%");
-			String[] rt = new String[Math.round(rg.length / (float)2)];
+			ArrayList<String> arra = new ArrayList<String>();
+			for (int i = 1; i < Math.round(rg.length / (float)2); i++) {
+				String x = rg[i * 2 - 1];
+				if(!arra.contains(x)) 
+					arra.add(x);
+			}
+			String[] rt = new String[arra.size() + 1];
 			rt[0] = reader;
-			for (int i = 1; i < rt.length; i++) {
-				rt[i] = rg[i * 2 - 1];
+			int i = 1;
+			for(String x : arra) {
+				rt[i++] = x;
 			}
 			PRESET_NAMES.put(name, rt);
 		} catch (IOException | URISyntaxException e) {

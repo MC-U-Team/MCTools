@@ -79,7 +79,7 @@ public class ItemScene extends BasicScene {
 					String[] pre = Presets.PRESET_NAMES.get(key);
 					String json = pre[0];
 					for (int i = 1; i < pre.length; i++) {
-						json.replace("%" + pre[i] + "%", arr[i]);
+						json = json.replaceAll("%" + pre[i] + "%", arr[i]);
 					}
 					try {
 						Path pth2 = Paths.get(Cache.getItemPath().toString(), arr[0] + ".json");
@@ -87,6 +87,8 @@ public class ItemScene extends BasicScene {
 						Files.write(pth2, json.getBytes());
 						names.clear();
 						Cache.getItemJsons().forEach((pth, obj) -> names.add(pth.getFileName().toString().replace(".json", "")));
+						models.getItems().clear();
+						models.getItems().addAll(names);
 					} catch (Throwable e) {
 						ExceptionDialog.stacktrace(e);
 					}

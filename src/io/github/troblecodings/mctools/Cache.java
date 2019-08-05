@@ -38,11 +38,13 @@ public class Cache {
 		}
 		return modid;
 	}
-	
-	private static HashMap<Path, JSONObject> getJsons(@Nullable HashMap<Path, JSONObject> map, final Path path) throws Throwable {
+
+	private static HashMap<Path, JSONObject> getJsons(@Nullable HashMap<Path, JSONObject> map, final Path path)
+			throws Throwable {
 		if (map == null) {
 			final HashMap<Path, JSONObject> map2 = new HashMap<Path, JSONObject>();
-			Files.list(path).forEach(pth -> {
+			Files.list(path).filter(pth -> !Files.isDirectory(pth) && pth.toString().endsWith(".json"))
+			.forEach(pth -> {
 				try {
 					Reader reader = Files.newBufferedReader(pth, Charset.forName("utf-8"));
 					map2.put(pth, new JSONObject(new JSONTokener(reader)));
@@ -55,13 +57,13 @@ public class Cache {
 		}
 		return map;
 	}
-	
+
 /// ITEM SECTION
 
 	public static HashMap<Path, JSONObject> getItemJsons() throws Throwable {
 		return itemJsons = getJsons(itemJsons, getItemPath());
 	}
-	
+
 	public static HashMap<Path, JSONObject> addItemJson(Path name, String content) throws Throwable {
 		itemJsons.put(name, new JSONObject(content));
 		return itemJsons;

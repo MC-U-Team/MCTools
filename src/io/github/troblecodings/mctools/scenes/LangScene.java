@@ -73,6 +73,8 @@ public class LangScene extends BasicScene {
 		final ListView<String> langs = new ListView<String>();
 		langs.getItems().addAll(langList);
 		langs.setOnMouseClicked(evt -> {
+			if(langs.getSelectionModel().getSelectedItem() == null)
+				return;
 			try {
 				final ChangingDialog dialog = new ChangingDialog(Paths.get(Cache.getLangPath().toString(),
 						langs.getSelectionModel().getSelectedItem() + ".json"));
