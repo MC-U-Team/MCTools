@@ -9,12 +9,12 @@ import org.json.JSONObject;
 
 import io.github.troblecodings.mctools.Cache;
 import io.github.troblecodings.mctools.UIApp;
-import io.github.troblecodings.mctools.jfxtools.CreationDialog;
-import io.github.troblecodings.mctools.jfxtools.ExceptionDialog;
-import io.github.troblecodings.mctools.jfxtools.InfoDialog;
 import io.github.troblecodings.mctools.jfxtools.SearchAbleHandler;
 import io.github.troblecodings.mctools.jfxtools.StyledButton;
 import io.github.troblecodings.mctools.jfxtools.StyledLabel;
+import io.github.troblecodings.mctools.jfxtools.dialog.CreationDialog;
+import io.github.troblecodings.mctools.jfxtools.dialog.ExceptionDialog;
+import io.github.troblecodings.mctools.jfxtools.dialog.InfoDialog;
 import io.github.troblecodings.mctools.presets.Presets;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
@@ -25,8 +25,7 @@ public class ItemScene extends BasicScene {
 
 	private ArrayList<String> names;
 	private ArrayList<String> itemnames;
-	private Path data;
-	
+
 	public ItemScene(OverViewScene scene) {
 		this.setOnBackPressed(evt -> UIApp.setScene(scene));
 	}
@@ -36,12 +35,8 @@ public class ItemScene extends BasicScene {
 		names = new ArrayList<String>();
 		Cache.getItemJsons().forEach((pth, obj) -> names.add(pth.getFileName().toString().replace(".json", "")));
 		itemnames = new ArrayList<String>();
-		data = Paths.get("data\\items");
-		if (!Files.exists(data))
-			Files.createDirectories(data);
-		else
-			Files.list(data).filter(pth -> !Files.isDirectory(pth) && pth.toString().endsWith(".json"))
-					.forEach(name -> itemnames.add(name.getFileName().toString().replace(".json", "")));
+		Files.list(Cache.getItemDataPath()).filter(pth -> !Files.isDirectory(pth) && pth.toString().endsWith(".json"))
+				.forEach(name -> itemnames.add(name.getFileName().toString().replace(".json", "")));
 	}
 
 	@Override
@@ -79,11 +74,7 @@ public class ItemScene extends BasicScene {
 				final CreationDialog dia = new CreationDialog(key);
 				dia.showAndWait().filter(ButtonType.OK::equals).ifPresent(btn -> {
 					String[] arr = dia.getValues();
-					String[] pre = Presets.PRESET_NAMES.get(key);
-					String json = pre[0];
-					for (int i = 1; i < pre.length; i++) {
-						json = json.replaceAll("%" + pre[i] + "%", arr[i]);
-					}
+					String json = Presets.get(key, arr);
 					try {
 						Path pth2 = Paths.get(Cache.getItemPath().toString(), arr[0] + ".json");
 						Cache.addItemJson(pth2, json);
@@ -105,12 +96,13 @@ public class ItemScene extends BasicScene {
 
 		final ListView<String> items = new ListView<String>();
 		items.getItems().addAll(itemnames);
-		items.setOnMouseClicked(evt -> {});
+		items.setOnMouseClicked(evt -> {
+		});
 		pane.add(items, 1, 1);
-		
+
 		StyledButton additem = new StyledButton("Add item");
 		additem.setOnAction(evt -> {
-			
+
 		});
 		pane.add(additem, 1, 2);
 	}

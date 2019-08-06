@@ -16,8 +16,8 @@
 
 package io.github.troblecodings.mctools.scenes;
 
-import io.github.troblecodings.mctools.jfxtools.ExceptionDialog;
 import io.github.troblecodings.mctools.jfxtools.StyledButton;
+import io.github.troblecodings.mctools.jfxtools.dialog.ExceptionDialog;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;

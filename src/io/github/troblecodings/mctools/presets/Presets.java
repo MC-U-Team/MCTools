@@ -38,4 +38,13 @@ public class Presets {
 			e.printStackTrace();
 		}
 	}
+	
+	public static String get(final String key, final String[] values) {
+		String[] pre = Presets.PRESET_NAMES.get(key);
+		String json = pre[0];
+		for (int i = 1; i < pre.length; i++) {
+			json = json.replaceAll("%" + pre[i] + "%", values[i]);
+		}
+		return json;
+	}
 }

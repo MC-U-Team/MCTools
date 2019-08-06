@@ -26,10 +26,10 @@ import org.json.JSONObject;
 
 import io.github.troblecodings.mctools.Cache;
 import io.github.troblecodings.mctools.UIApp;
-import io.github.troblecodings.mctools.jfxtools.ExceptionDialog;
 import io.github.troblecodings.mctools.jfxtools.StyledButton;
 import io.github.troblecodings.mctools.jfxtools.StyledLabel;
 import io.github.troblecodings.mctools.jfxtools.StyledTextfield;
+import io.github.troblecodings.mctools.jfxtools.dialog.ExceptionDialog;
 import io.github.troblecodings.mctools.lookups.Lookups;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;

@@ -23,68 +23,91 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 
-public class SetupScene extends BasicScene implements EventHandler<ActionEvent>{
+public class SetupScene extends BasicScene implements EventHandler<ActionEvent> {
 
 	private TextField workspace_path;
 	private Label error;
-	
-	public SetupScene() {}
-	
+
+	private final String path;
+
+	public SetupScene() {
+		this.path = "";
+	}
+
+	public SetupScene(final String path) {
+		this.path = path;
+	}
+
+	public SetupScene(final BasicScene scene) {
+		this(scene, "");
+	}
+
 	/**
 	 * @param back overview scene
+	 * @param Path on creation
 	 */
-	@SuppressWarnings("deprecation")
-	public SetupScene(OverViewScene scene){
-		this.setOnBackPressed(evt -> UIApp.setScene(scene), 1, pane.impl_getColumnCount() - 1);
+	public SetupScene(final BasicScene scene, final String path) {
+		this.path = path;
+		this.setOnBackPressed(evt -> UIApp.setScene(scene), 0, 3);
 	}
-	
+
 	@Override
 	protected void init(GridPane pane) {
 		workspace_path = new StyledTextfield("Workspace location");
-		pane.add(workspace_path, 0, 0);
+		workspace_path.setText(path);
+		pane.add(workspace_path, 0, 1);
 
-		Button use_chooser = new StyledButton("...");
-		use_chooser.setOnAction(evt -> {
+		Button useChooser = new StyledButton("...");
+		useChooser.setOnAction(evt -> {
 			DirectoryChooser chooser = new DirectoryChooser();
 			File fl = chooser.showDialog(getWindow());
-			if(fl != null) workspace_path.setText(fl.getAbsolutePath());
+			if (fl != null)
+				workspace_path.setText(fl.getAbsolutePath());
 		});
-		pane.add(use_chooser, 1, 0);
-		
+		pane.add(useChooser, 1, 1);
+
 		Button apply = new StyledButton("Apply");
 		apply.setOnAction(this);
-		pane.add(apply, 0, 1);
-		
+		pane.add(apply, 0, 2);
+
 		error = new StyledLabel("");
 		error.setTextFill(Color.RED);
-		pane.add(error, 0, 2);
-				
+		pane.add(error, 0, 0);
+		
+		StyledButton create = new StyledButton("Create Mod");
+		create.setOnAction(evt -> UIApp.setScene(new CreateModScene()));
+		pane.add(create, 1, 2);
+		
 		apply.requestFocus();
 	}
 
 	@Override
 	public void handle(ActionEvent event) {
 		String str = workspace_path.getText();
-		if(str.isEmpty()) {
+		if (str == null || str.isEmpty()) {
 			error.setText("Error: Path is empty!");
 			return;
 		}
 		Path path = null;
-		try { path = Paths.get(str); } catch ( InvalidPathException ex) {
+		try {
+			path = Paths.get(str);
+		} catch (InvalidPathException ex) {
 			error.setText("Error: Path is invalid!");
 			return;
 		}
-		if(!Files.isDirectory(path)) {
+		if (!Files.isDirectory(path)) {
 			error.setText("Error: Path is not a directory!");
 			return;
 		}
-		if(!Files.exists(path)) {
+		if (!Files.exists(path)) {
 			error.setText("Error: Path does not exist!");
 			return;
 		}
-		
+
 		try {
-			if(Files.list(path).noneMatch(pth -> { return pth.getFileName().toString().contentEquals("build.gradle"); })) {
+			if (Files.list(path).noneMatch(pth -> {
+				return pth.getFileName().toString().contentEquals("build.gradle");
+			})) {
 				error.setText("Error: No build.gradle found!");
 				return;
 			}
@@ -92,10 +115,10 @@ public class SetupScene extends BasicScene implements EventHandler<ActionEvent>{
 			error.setText("Error: Failed to list directories content!");
 			return;
 		}
-		
+
 		Settings.setSetting(StringSetting.WORKSPACE, str);
 		Cache.clearCache();
 		UIApp.setScene(new OverViewScene());
 	}
-	
+
 }

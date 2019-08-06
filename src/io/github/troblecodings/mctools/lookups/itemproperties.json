@@ -1,0 +1,19 @@
+{
+   "rarity" : [ "Rarity.COMMON", "Rarity.UNCOMMON", "Rarity.RARE", "Rarity.EPIC"],
+   "defaultMaxDamage" :  [1, 100],
+   "group" : [ "ItemGroup.BUILDING_BLOCKS",
+               "ItemGroup.DECORATIONS",
+               "ItemGroup.REDSTONE",
+               "ItemGroup.TRANSPORTATION",
+               "ItemGroup.MISC",
+               "ItemGroup.SEARCH",
+               "ItemGroup.FOOD",
+               "ItemGroup.TOOLS",
+               "ItemGroup.COMBAT",
+               "ItemGroup.BREWING",
+               "ItemGroup.MATERIALS",
+               "ItemGroup.HOTBAR",
+               "ItemGroup.INVENTORY"],
+
+    "setNoRepair" : ""
+}

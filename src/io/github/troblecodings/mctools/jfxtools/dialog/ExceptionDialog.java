@@ -14,7 +14,7 @@
  * the License.
  ******************************************************************************/
 
-package io.github.troblecodings.mctools.jfxtools;
+package io.github.troblecodings.mctools.jfxtools.dialog;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

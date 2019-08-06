@@ -30,12 +30,12 @@ import javafx.scene.paint.Color;
 public class OverViewScene extends BasicScene {
 
 	private String name = "undefined";
-	
+
 	@Override
 	protected void preinit() throws Throwable {
 		this.name = Cache.getModID();
 	}
-	
+
 	@Override
 	protected void init(GridPane rootpane) {
 		StyledLabel label = new StyledLabel(name.toUpperCase());
@@ -46,28 +46,28 @@ public class OverViewScene extends BasicScene {
 		this.pane.add(pane, 0, 1);
 		pane.setHgap(15);
 		pane.setVgap(15);
-				
+
 		StyledButton lang = new StyledButton("Localisation");
 		lang.setOnAction(evt -> UIApp.setScene(new LangScene(this)));
 		pane.add(lang, 0, 0);
-		
+
 		StyledButton blocks = new StyledButton("Blocks");
 		blocks.setOnAction(evt -> {
-			
+
 		});
 		pane.add(blocks, 1, 0);
 
 		StyledButton items = new StyledButton("Items");
 		items.setOnAction(evt -> UIApp.setScene(new ItemScene(this)));
 		pane.add(items, 0, 1);
-		
+
 		StyledButton gui = new StyledButton("Gui");
 		gui.setOnAction(evt -> {
-			
+
 		});
 		pane.add(gui, 1, 1);
-		
+
 		this.setOnBackPressed("Switch workspace", evt -> UIApp.setScene(new SetupScene(this)), 0, 2);
 	}
-		
+
 }

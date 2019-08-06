@@ -16,13 +16,14 @@ import org.json.JSONTokener;
 import com.sun.istack.internal.Nullable;
 
 import io.github.troblecodings.mctools.Settings.StringSetting;
-import io.github.troblecodings.mctools.jfxtools.ExceptionDialog;
+import io.github.troblecodings.mctools.jfxtools.dialog.ExceptionDialog;
 
 public class Cache {
 
 	private static Path langPath = null;
 	private static Path itemPath = null;
 	private static Path itemTexturePath = null;
+	private static Path itemDataPath = null;
 
 	private static String modid = null;
 	private static ArrayList<String> langKeys = null;
@@ -116,14 +117,22 @@ public class Cache {
 
 /// PATH SECTION
 
-	private static Path getPath(@Nullable Path cache, final String dir) throws Throwable {
-		if (cache == null) {
-			cache = Paths.get(Settings.getSetting(StringSetting.WORKSPACE),
-					"src\\main\\resources\\assets\\" + Cache.getModID() + "\\" + dir);
+	private static Path getInternalPath(@Nullable Path cache, final String dir) throws Throwable {
+		if(cache == null) {
+			cache = Paths.get(dir);
 			if (!Files.exists(cache))
 				Files.createDirectories(cache);
 		}
 		return cache;
+	}
+	
+	private static Path getPath(@Nullable Path cache, final String dir) throws Throwable {
+		return getInternalPath(cache, Settings.getSetting(StringSetting.WORKSPACE)
+				+ "\\src\\main\\resources\\assets\\" + Cache.getModID() + "\\" + dir);
+	}
+	
+	public static Path getItemDataPath() throws Throwable {
+		return itemDataPath = getInternalPath(itemDataPath, "data\\item");
 	}
 
 	public static Path getLangPath() throws Throwable {

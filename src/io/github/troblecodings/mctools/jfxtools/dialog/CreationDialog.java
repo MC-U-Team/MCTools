@@ -1,6 +1,8 @@
-package io.github.troblecodings.mctools.jfxtools;
+package io.github.troblecodings.mctools.jfxtools.dialog;
 
 import io.github.troblecodings.mctools.Cache;
+import io.github.troblecodings.mctools.jfxtools.StyledLabel;
+import io.github.troblecodings.mctools.jfxtools.StyledTextfield;
 import io.github.troblecodings.mctools.presets.Presets;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
