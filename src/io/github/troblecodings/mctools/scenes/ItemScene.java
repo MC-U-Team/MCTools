@@ -74,7 +74,7 @@ public class ItemScene extends BasicScene {
 				final CreationDialog dia = new CreationDialog(key);
 				dia.showAndWait().filter(ButtonType.OK::equals).ifPresent(btn -> {
 					String[] arr = dia.getValues();
-					String json = Presets.get(key, arr);
+					String json = Presets.getS(key, arr);
 					try {
 						Path pth2 = Paths.get(Cache.getItemPath().toString(), arr[0] + ".json");
 						Cache.addItemJson(pth2, json);
