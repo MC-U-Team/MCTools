@@ -9,9 +9,14 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 import java.util.zip.ZipFile;
 
 import io.github.troblecodings.mctools.jfxtools.dialog.ExceptionDialog;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TextArea;
 
 public class CreationUtils {
 
@@ -55,17 +60,40 @@ public class CreationUtils {
 
 			Files.delete(forge);
 
+			ProcessBuilder prb = new ProcessBuilder("cmd", "/C", "gradlew.bat", "genEclipseRuns", "eclipse");
+			prb.directory(pth.toFile());
+			Process pro = prb.start();
+
+			Alert alert = new Alert(AlertType.INFORMATION);
+
+			TextArea field = new TextArea();
+			alert.getDialogPane().setContent(field);
+			alert.show();
+
+			new Thread(() -> {
+				Scanner sc = new Scanner(pro.getInputStream());
+				while (sc.hasNext()) {
+					String string = (String) sc.next();
+					Platform.runLater(() -> field.appendText(string + System.lineSeparator()));
+				}
+				sc.close();
+			}).start();
+			
+			alert.showAndWait();
+			pro.waitFor();
+
 			switch (version) {
 			case "1.14.4":
 				create_1_14_4(pth, modid, namespace);
 				break;
 			}
+
 		} catch (Throwable e) {
 			ExceptionDialog.stacktrace(e);
 		}
 	}
 
-	private static void create_1_14_4(final Path pth, final String modid, final String namespace) throws Throwable{
+	private static void create_1_14_4(final Path pth, final String modid, final String namespace) throws Throwable {
 		Path main = Paths.get(pth.toString(), "src\\main\\java");
 		Files.list(main).forEach(epath -> {
 			try {
@@ -74,11 +102,11 @@ public class CreationUtils {
 				ExceptionDialog.stacktrace(e);
 			}
 		});
-		
+
 		String withnamespc = main.toString() + "\\" + namespace.replace(".", "\\");
-		
-		String[] folders = { "proxy", "init", "item", "block"};
-		for(String folder : folders) {
+
+		String[] folders = { "proxy", "init", "item", "block" };
+		for (String folder : folders) {
 			Path p = Paths.get(withnamespc, folder);
 			Files.createDirectories(p);
 		}
