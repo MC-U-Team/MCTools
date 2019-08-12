@@ -17,7 +17,9 @@ public class Presets {
 		loadJ("itemblock");
 		loadJ("itemgenerated");
 		loadS("modmain");
-		loadS("buildgradle");
+		loadS("build.gradle");
+		loadS("commonproxy");
+		loadS("clientproxy");
 	}
 	
 	private static void loadJ(String name) {
@@ -57,6 +59,8 @@ public class Presets {
 	
 	public static String getS(final String key, final String... values) {
 		String[] pre = Presets.PRESET_NAMES.get(key);
+		if(pre == null)
+			pre = Presets.SILENT_PRESET_NAMES.get(key);
 		String json = pre[0];
 		for (int i = 1; i < pre.length; i++) {
 			json = json.replaceAll("%" + pre[i] + "%", values[i]);

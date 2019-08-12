@@ -1,0 +1,17 @@
+package %namespace%.proxy;
+
+public class ClientProxy extends CommonProxy {
+	
+	@Override
+	public void construct() {
+	}
+	
+	@Override
+	public void setup() {
+	}
+	
+	@Override
+	public void complete() {
+	}
+	
+}
