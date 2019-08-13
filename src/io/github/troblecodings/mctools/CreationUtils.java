@@ -102,7 +102,7 @@ public class CreationUtils {
 
 			String withnamespc = main.toString() + "\\" + namespace.replace(".", "\\");
 
-			String[] folders = { "proxy", "init", "item", "block" };
+			String[] folders = { "proxy", "init", "item", "block", "autogen" };
 			for (String folder : folders) {
 				Path p = Paths.get(withnamespc, folder);
 				if (Files.notExists(p))
@@ -126,6 +126,11 @@ public class CreationUtils {
 		writePreset(pth, "modmain", dirs + "\\ModMain.java", namespace, modid);
 		writePreset(pth, "clientproxy", dirs + "\\proxy\\ClientProxy.java", namespace);
 		writePreset(pth, "commonproxy", dirs + "\\proxy\\CommonProxy.java", namespace);
+		writePreset(pth, "modblocks", dirs + "\\init\\ModBlocks.java", namespace);
+		writePreset(pth, "moditems", dirs + "\\init\\ModItems.java", namespace);
+		writePreset(pth, "moditemgroups", dirs + "\\init\\ModItemGroups.java", namespace);
+		writePreset(pth, "moditemgroups", dirs + "\\init\\ModItemGroups.java", namespace);
+		writePreset(pth, "autogen", dirs + "\\autogen\\Autogen.java", namespace);
 	}
 	
 	private static void writePreset(final Path pth, final String pname, final String name, final String... data) throws Throwable {

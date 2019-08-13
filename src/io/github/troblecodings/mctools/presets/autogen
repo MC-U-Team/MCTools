@@ -1,0 +1,25 @@
+package %namespace%.autogen;
+
+import java.util.List;
+
+import %namespace%.*;
+import %namespace%.init.*;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraftforge.event.RegistryEvent.Register;
+
+public class Autogen {
+	
+	public static void registerItems(Register<Item> event) {
+	
+	}
+	
+	public static void registerBlocks(Register<Block> event) {
+	
+	}
+	
+	public static void registerBlockItems(Register<Item> event) {
+	
+	}
+	
+}

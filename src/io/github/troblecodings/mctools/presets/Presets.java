@@ -20,6 +20,10 @@ public class Presets {
 		loadS("build.gradle");
 		loadS("commonproxy");
 		loadS("clientproxy");
+		loadS("modblocks");
+		loadS("moditems");
+		loadS("moditemgroups");
+		loadS("autogen");
 	}
 	
 	private static void loadJ(String name) {
