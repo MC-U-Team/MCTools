@@ -13,24 +13,43 @@ public class Presets {
 	public static final HashMap<String, String[]> ITEM_PRESETS = new HashMap<String, String[]>();
 	public static final HashMap<String, String[]> BASIC_MOD_CREATION = new HashMap<String, String[]>();
 
+	public static final ArrayList<String> NEEDS_DIALOG = new ArrayList<String>();
+	
 	static {
-		loadS("itemblock", ITEM_PRESETS);
-		loadS("itemgenerated", ITEM_PRESETS);
-		loadS("modmain", BASIC_MOD_CREATION);
-		loadS("build.gradle", BASIC_MOD_CREATION);
-		loadS("commonproxy", BASIC_MOD_CREATION);
-		loadS("clientproxy", BASIC_MOD_CREATION);
-		loadS("modblocks", BASIC_MOD_CREATION);
-		loadS("moditems", BASIC_MOD_CREATION);
-		loadS("moditemgroups", BASIC_MOD_CREATION);
+		loadS("itemblock_basic", ITEM_PRESETS);
+		loadS("itemgenerated_basic", ITEM_PRESETS);
+		loadS("modmain_basic", BASIC_MOD_CREATION);
+		loadS("buildgradle_basic", BASIC_MOD_CREATION);
+		loadS("commonproxy_basic", BASIC_MOD_CREATION);
+		loadS("clientproxy_basic", BASIC_MOD_CREATION);
+		loadS("modblocks_basic", BASIC_MOD_CREATION);
+		loadS("moditems_basic", BASIC_MOD_CREATION);
+		loadS("moditemgroups_basic", BASIC_MOD_CREATION);
 		loadS("autogen", BASIC_MOD_CREATION);
-		loadS("toml", BASIC_MOD_CREATION);
+		loadS("toml_basic", BASIC_MOD_CREATION, true);
+		
+		loadS("modmain_uteamcore", BASIC_MOD_CREATION);
+		loadS("buildgradle_uteamcore", BASIC_MOD_CREATION);
+		loadS("commonproxy_uteamcore", BASIC_MOD_CREATION);
+		loadS("clientproxy_uteamcore", BASIC_MOD_CREATION);
+		loadS("modblocks_uteamcore", BASIC_MOD_CREATION);
+		loadS("moditems_uteamcore", BASIC_MOD_CREATION);
+		loadS("moditemgroups_uteamcore", BASIC_MOD_CREATION);
+		loadS("buildproperties", BASIC_MOD_CREATION, true);
+		loadS("toml_uteamcore", BASIC_MOD_CREATION, true);
 	}
 		
 	private static void loadS(String name, HashMap<String, String[]> mp) {
+		loadS(name, mp, false);
+	}
+	
+	private static void loadS(String name, HashMap<String, String[]> mp, boolean b) {
 		try {
 			String reader = new String(Files.readAllBytes(Paths.get(Presets.class.getResource(name).toURI())), Charset.forName("utf-8"));
 			mp.put(name, load(reader));
+			if(b) {
+				NEEDS_DIALOG.add(name);
+			}
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -38,6 +57,9 @@ public class Presets {
 	
 	private static String[] load(String reader) {
 		String[] rg = reader.split("%");
+		if(rg.length == 1) {
+			return rg;
+		}
 		ArrayList<String> arra = new ArrayList<String>();
 		for (int i = 1; i < Math.round(rg.length / (float)2); i++) {
 			String x = rg[i * 2 - 1];

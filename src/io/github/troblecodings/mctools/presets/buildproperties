@@ -1,0 +1,21 @@
+#Forge Settings
+forge.mcversion=1.14.4
+
+#Mod Settings
+mod.version=1.1.0
+mod.snapshot=false
+mod.filename=%modid%
+mod.name=%modid%
+
+#Curse
+curse.id=306475
+curse.type=release
+curse.display=%modid%
+
+#Github
+github.name=%modid%
+github.branch=1.14.4
+
+#Dependencies
+#Jei
+jei.version=6.0.0.10

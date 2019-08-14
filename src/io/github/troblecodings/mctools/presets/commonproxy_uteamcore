@@ -1,0 +1,16 @@
+package %namespace%.proxy;
+
+import info.u_team.u_team_core.api.IModProxy;
+
+public class CommonProxy implements IModProxy {
+	
+	@override
+	public void construct() { }
+	
+	@override
+	public void setup() { }
+	
+	@override
+	public void complete() { }
+	
+}

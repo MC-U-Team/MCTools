@@ -1,0 +1,19 @@
+package %namespace%.init;
+
+import %namespace%.*;
+import %namespace%.autogen.*;
+import net.minecraft.item.Item;
+import net.minecraftforge.event.RegistryEvent.Register;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+
+@EventBusSubscriber(modid = ModMain.MODID, bus = Bus.MOD)
+public class ModItems {
+		
+	@SubscribeEvent
+	public static void register(Register<Item> event) {
+		Autogen.registerItems(event);
+	}
+			
+}

@@ -46,16 +46,23 @@ public class CreateModScene extends BasicScene {
 		versionSelector.getItems().addAll("1.14.4");
 		versionSelector.getSelectionModel().select(0);
 		pane.add(versionSelector, 1, 3);
+		
+		pane.add(new StyledLabel("Preset"), 0, 4);
+
+		final ChoiceBox<String> preset = new ChoiceBox<String>();
+		preset.getItems().addAll("basic", "uteamcore");
+		preset.getSelectionModel().select(0);
+		pane.add(preset, 1, 4);
 
 		final StyledButton apply = new StyledButton("Apply");
 		apply.setOnAction(evt -> {
 			pane.getChildren().clear();
 			pane.add(new StyledLabel("Loading"), 0, 0);
-			CreationUtils.createModBase(Paths.get(workspacePath.getText()), textfield.getText(),
+			CreationUtils.createModBase(Paths.get(workspacePath.getText()), preset.getSelectionModel().getSelectedItem(), textfield.getText(),
 					namespace.getText(), versionSelector.getSelectionModel().getSelectedItem());
 		});
-		pane.add(apply, 1, 4);
+		pane.add(apply, 1, 5);
 
-		this.setOnBackPressed(evt -> UIApp.setScene(new SetupScene(workspacePath.getText())), 0, 4);
+		this.setOnBackPressed(evt -> UIApp.setScene(new SetupScene(workspacePath.getText())), 0, 5);
 	}
 }

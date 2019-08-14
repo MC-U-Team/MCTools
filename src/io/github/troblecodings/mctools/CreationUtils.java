@@ -25,7 +25,8 @@ import javafx.stage.StageStyle;
 
 public class CreationUtils {
 
-	public static void createModBase(final Path pth, final String modid, final String namespace, final String version) {
+	public static void createModBase(final Path pth, final String preset, final String modid, final String namespace, final String version) {
+		Cache.updateModid(modid);
 		try {
 			// TODO VERSIONING
 			URL url = new URL(
@@ -68,6 +69,11 @@ public class CreationUtils {
 
 			Files.delete(forge);
 
+			writePreset(pth, "buildgradle_" + preset, "build.gradle", namespace, modid);
+			if(preset.contentEquals("uteamcore")) {
+				writePreset(pth, "buildproperties", "build.properties", modid);
+			}
+			
 			ProcessBuilder prb = new ProcessBuilder("cmd", "/C", "gradlew.bat", "genEclipseRuns", "eclipse");
 			prb.directory(pth.toFile());
 			Process pro = prb.start();
@@ -113,7 +119,7 @@ public class CreationUtils {
 
 			switch (version) {
 			case "1.14.4":
-				create_1_14_4(pth, modid, namespace);
+				create_1_14_4(pth, preset, modid, namespace);
 				break;
 			}
 
@@ -122,32 +128,31 @@ public class CreationUtils {
 		}
 	}
 
-	private static void create_1_14_4(final Path pth, final String modid, final String namespace) throws Throwable {
-		Cache.updateModid(modid);
-		
+	private static void create_1_14_4(final Path pth, final String preset, final String modid, final String namespace) throws Throwable {		
 		String dirs = "\\src\\main\\java\\" + namespace.replace(".", "\\");
-		writePreset(pth, "build.gradle", "build.gradle", namespace, modid);
-		writePreset(pth, "modmain", dirs + "\\ModMain.java", namespace, modid);
-		writePreset(pth, "clientproxy", dirs + "\\proxy\\ClientProxy.java", namespace);
-		writePreset(pth, "commonproxy", dirs + "\\proxy\\CommonProxy.java", namespace);
-		writePreset(pth, "modblocks", dirs + "\\init\\ModBlocks.java", namespace);
-		writePreset(pth, "moditems", dirs + "\\init\\ModItems.java", namespace);
-		writePreset(pth, "moditemgroups", dirs + "\\init\\ModItemGroups.java", namespace);
-		writePreset(pth, "moditemgroups", dirs + "\\init\\ModItemGroups.java", namespace);
+		writePreset(pth, "modmain_" + preset, dirs + "\\ModMain.java", namespace, modid);
+		writePreset(pth, "clientproxy_" + preset, dirs + "\\proxy\\ClientProxy.java", namespace);
+		writePreset(pth, "commonproxy_" + preset, dirs + "\\proxy\\CommonProxy.java", namespace);
+		writePreset(pth, "modblocks_" + preset, dirs + "\\init\\ModBlocks.java", namespace);
+		writePreset(pth, "moditems_" + preset, dirs + "\\init\\ModItems.java", namespace);
+		writePreset(pth, "moditemgroups_" + preset, dirs + "\\init\\ModItemGroups.java", namespace);
 		writePreset(pth, "autogen", dirs + "\\autogen\\Autogen.java", namespace);
-		
-		CreationDialog dialog = new CreationDialog("toml", Presets.BASIC_MOD_CREATION, false);
-		dialog.showAndWait().ifPresent(json -> 
-		{
-			try {
-				Files.write(Paths.get(pth.toString(), "\\src\\main\\resources\\META-INF\\mods.toml"), json.getBytes());
-			} catch (IOException e) {
-				ExceptionDialog.stacktrace(e);
-			}
-		});
+		writePreset(pth, "toml_" + preset, "\\src\\main\\resources\\META-INF\\mods.toml");
 	}
 	
 	private static void writePreset(final Path pth, final String pname, final String name, final String... data) throws Throwable {
+		if(Presets.NEEDS_DIALOG.contains(pname)) {
+			CreationDialog dialog = new CreationDialog(pname, Presets.BASIC_MOD_CREATION, false);
+			dialog.showAndWait().ifPresent(json -> 
+			{
+				try {
+					Files.write(Paths.get(pth.toString(), name), json.getBytes());
+				} catch (IOException e) {
+					ExceptionDialog.stacktrace(e);
+				}
+			});
+			return;
+		}
 		Files.write(Paths.get(pth.toString(), name),
 				Presets.get(pname, Presets.BASIC_MOD_CREATION, data).getBytes());
 	}
