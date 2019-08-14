@@ -16,8 +16,8 @@ public class Presets {
 	public static final ArrayList<String> NEEDS_DIALOG = new ArrayList<String>();
 	
 	static {
-		loadS("itemblock_basic", ITEM_PRESETS);
-		loadS("itemgenerated_basic", ITEM_PRESETS);
+		loadS("itemblock", ITEM_PRESETS);
+		loadS("itemgenerated", ITEM_PRESETS);
 		loadS("modmain_basic", BASIC_MOD_CREATION);
 		loadS("buildgradle_basic", BASIC_MOD_CREATION);
 		loadS("commonproxy_basic", BASIC_MOD_CREATION);
