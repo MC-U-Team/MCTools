@@ -1,29 +1,36 @@
 package io.github.troblecodings.mctools.jfxtools.dialog;
 
+import java.util.HashMap;
+
 import io.github.troblecodings.mctools.Cache;
 import io.github.troblecodings.mctools.jfxtools.StyledLabel;
 import io.github.troblecodings.mctools.jfxtools.StyledTextfield;
 import io.github.troblecodings.mctools.presets.Presets;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.GridPane;
 
-public class CreationDialog extends Alert {
+public class CreationDialog extends Dialog<String> {
 
-	private String[] values;
+	private String filename;
+	
+	public CreationDialog(final String key, final HashMap<String, String[]> map) {
+		this(key, map, true);
+	}
 
-	public CreationDialog(final String key) {
-		super(AlertType.CONFIRMATION);
-
+	public CreationDialog(final String key, final HashMap<String, String[]> map, final boolean namefield) {
 		final GridPane pane = new GridPane();
-
-		pane.add(new StyledLabel("Item"), 0, 0);
-		pane.add(new StyledTextfield("Name"), 1, 0);
+		
+		if (namefield) {
+			pane.add(new StyledLabel("Name"), 0, 0);
+			pane.add(new StyledTextfield("name"), 1, 0);
+		}
 
 		if (key != "Costume") {
 			boolean b = true;
-			for (String property : Presets.PRESET_NAMES.get(key)) {
+			for (String property : map.get(key)) {
 				if (b) {
 					b = false;
 					continue;
@@ -38,19 +45,24 @@ public class CreationDialog extends Alert {
 			}
 		}
 
+		this.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+		
 		this.getDialogPane().setContent(pane);
 		this.setResultConverter(res -> {
+			if(res == ButtonType.CANCEL) return null;
 			FilteredList<Node> no = pane.getChildren().filtered(node -> node instanceof StyledTextfield);
-			values = new String[no.size()];
-			for (int j = 0; j < values.length; j++) {
-				values[j] = ((StyledTextfield) no.get(j)).getText();
+			String[] values = new String[namefield ? (no.size() - 1):no.size()];
+			filename = ((StyledTextfield) no.get(0)).getText();
+			for (int j = namefield ? 1:0; j < values.length; j++) {
+				StyledTextfield tex = ((StyledTextfield) no.get(j));
+				values[j] = tex.getText();
 			}
-			return res;
+			return Presets.get(key, map, values);
 		});
 	}
 
-	public String[] getValues() {
-		return values;
+	public String getFilename() {
+		return this.filename;
 	}
 
 	private String suggestion(final String in) {
@@ -58,6 +70,10 @@ public class CreationDialog extends Alert {
 			switch (in) {
 			case "modid":
 				return Cache.getModID();
+			case "logoFile":
+				return "logo.png";
+			case "displayName":
+				return Cache.getModID().substring(0, 1).toUpperCase() + Cache.getModID().substring(1);
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -66,4 +82,3 @@ public class CreationDialog extends Alert {
 	}
 
 }
-

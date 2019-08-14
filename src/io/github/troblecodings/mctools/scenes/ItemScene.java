@@ -16,7 +16,6 @@ import io.github.troblecodings.mctools.jfxtools.dialog.CreationDialog;
 import io.github.troblecodings.mctools.jfxtools.dialog.ExceptionDialog;
 import io.github.troblecodings.mctools.jfxtools.dialog.InfoDialog;
 import io.github.troblecodings.mctools.presets.Presets;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
@@ -68,15 +67,13 @@ public class ItemScene extends BasicScene {
 		StyledButton button = new StyledButton("Add model");
 		button.setOnAction(evt -> {
 			ChoiceDialog<String> dialog = new ChoiceDialog<String>("Costume");
-			dialog.getItems().addAll(Presets.PRESET_NAMES.keySet());
-			SearchAbleHandler.addToDialog(dialog, Presets.PRESET_NAMES.keySet());
+			dialog.getItems().addAll(Presets.ITEM_PRESETS.keySet());
+			SearchAbleHandler.addToDialog(dialog, Presets.ITEM_PRESETS.keySet());
 			dialog.showAndWait().ifPresent(key -> {
-				final CreationDialog dia = new CreationDialog(key);
-				dia.showAndWait().filter(ButtonType.OK::equals).ifPresent(btn -> {
-					String[] arr = dia.getValues();
-					String json = Presets.getS(key, arr);
+				final CreationDialog dia = new CreationDialog(key, Presets.ITEM_PRESETS);
+				dia.showAndWait().ifPresent(json -> {
 					try {
-						Path pth2 = Paths.get(Cache.getItemPath().toString(), arr[0] + ".json");
+						Path pth2 = Paths.get(Cache.getItemPath().toString(), dia.getFilename() + ".json");
 						Cache.addItemJson(pth2, json);
 						Files.write(pth2, json.getBytes());
 						names.clear();

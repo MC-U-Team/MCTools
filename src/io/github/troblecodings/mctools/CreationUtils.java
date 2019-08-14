@@ -1,6 +1,7 @@
 package io.github.troblecodings.mctools;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.zip.ZipFile;
 
+import io.github.troblecodings.mctools.jfxtools.dialog.CreationDialog;
 import io.github.troblecodings.mctools.jfxtools.dialog.ExceptionDialog;
 import io.github.troblecodings.mctools.presets.Presets;
 import javafx.application.Platform;
@@ -121,6 +123,8 @@ public class CreationUtils {
 	}
 
 	private static void create_1_14_4(final Path pth, final String modid, final String namespace) throws Throwable {
+		Cache.updateModid(modid);
+		
 		String dirs = "\\src\\main\\java\\" + namespace.replace(".", "\\");
 		writePreset(pth, "build.gradle", "build.gradle", namespace, modid);
 		writePreset(pth, "modmain", dirs + "\\ModMain.java", namespace, modid);
@@ -131,11 +135,21 @@ public class CreationUtils {
 		writePreset(pth, "moditemgroups", dirs + "\\init\\ModItemGroups.java", namespace);
 		writePreset(pth, "moditemgroups", dirs + "\\init\\ModItemGroups.java", namespace);
 		writePreset(pth, "autogen", dirs + "\\autogen\\Autogen.java", namespace);
+		
+		CreationDialog dialog = new CreationDialog("toml", Presets.BASIC_MOD_CREATION, false);
+		dialog.showAndWait().ifPresent(json -> 
+		{
+			try {
+				Files.write(Paths.get(pth.toString(), "\\src\\main\\resources\\META-INF\\mods.toml"), json.getBytes());
+			} catch (IOException e) {
+				ExceptionDialog.stacktrace(e);
+			}
+		});
 	}
 	
 	private static void writePreset(final Path pth, final String pname, final String name, final String... data) throws Throwable {
 		Files.write(Paths.get(pth.toString(), name),
-				Presets.get(pname, data).getBytes());
+				Presets.get(pname, Presets.BASIC_MOD_CREATION, data).getBytes());
 	}
 
 }

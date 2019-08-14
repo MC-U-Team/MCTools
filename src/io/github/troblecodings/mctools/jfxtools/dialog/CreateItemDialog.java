@@ -60,7 +60,7 @@ public class CreateItemDialog extends Dialog<String> {
 					
 					if (generateModels.isSelected()) {
 						String[] arr = new String[] { Cache.getModID(), namestr };
-						String json = Presets.get("itemgenerated", arr);
+						String json = Presets.get("itemgenerated", Presets.ITEM_PRESETS, arr);
 						Path pth2 = Paths.get(Cache.getItemPath().toString(), namestr + ".json");
 						Cache.addItemJson(pth2, json);
 						Files.write(pth2, json.getBytes());

@@ -10,35 +10,27 @@ import java.util.HashMap;
 
 public class Presets {
 
-	public static final HashMap<String, String[]> PRESET_NAMES = new HashMap<String, String[]>();
-	public static final HashMap<String, String[]> SILENT_PRESET_NAMES = new HashMap<String, String[]>();
+	public static final HashMap<String, String[]> ITEM_PRESETS = new HashMap<String, String[]>();
+	public static final HashMap<String, String[]> BASIC_MOD_CREATION = new HashMap<String, String[]>();
 
 	static {
-		loadJ("itemblock");
-		loadJ("itemgenerated");
-		loadS("modmain");
-		loadS("build.gradle");
-		loadS("commonproxy");
-		loadS("clientproxy");
-		loadS("modblocks");
-		loadS("moditems");
-		loadS("moditemgroups");
-		loadS("autogen");
+		loadS("itemblock", ITEM_PRESETS);
+		loadS("itemgenerated", ITEM_PRESETS);
+		loadS("modmain", BASIC_MOD_CREATION);
+		loadS("build.gradle", BASIC_MOD_CREATION);
+		loadS("commonproxy", BASIC_MOD_CREATION);
+		loadS("clientproxy", BASIC_MOD_CREATION);
+		loadS("modblocks", BASIC_MOD_CREATION);
+		loadS("moditems", BASIC_MOD_CREATION);
+		loadS("moditemgroups", BASIC_MOD_CREATION);
+		loadS("autogen", BASIC_MOD_CREATION);
+		loadS("toml", BASIC_MOD_CREATION);
 	}
-	
-	private static void loadJ(String name) {
-		try {
-			String reader = new String(Files.readAllBytes(Paths.get(Presets.class.getResource(name + ".json").toURI())), Charset.forName("utf-8"));
-			PRESET_NAMES.put(name, load(reader));
-		} catch (IOException | URISyntaxException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private static void loadS(String name) {
+		
+	private static void loadS(String name, HashMap<String, String[]> mp) {
 		try {
 			String reader = new String(Files.readAllBytes(Paths.get(Presets.class.getResource(name).toURI())), Charset.forName("utf-8"));
-			SILENT_PRESET_NAMES.put(name, load(reader));
+			mp.put(name, load(reader));
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -61,10 +53,8 @@ public class Presets {
 		return rt;
 	}
 	
-	public static String getS(final String key, final String... values) {
-		String[] pre = Presets.PRESET_NAMES.get(key);
-		if(pre == null)
-			pre = Presets.SILENT_PRESET_NAMES.get(key);
+	public static String getS(final String key, final HashMap<String, String[]> maps, final String... values) {
+		String[] pre = maps.get(key);
 		String json = pre[0];
 		for (int i = 1; i < pre.length; i++) {
 			json = json.replaceAll("%" + pre[i] + "%", values[i]);
@@ -72,13 +62,11 @@ public class Presets {
 		return json;
 	}
 	
-	public static String get(final String key, final String... values) {
-		String[] pre = Presets.PRESET_NAMES.get(key);
-		if(pre == null)
-			pre = Presets.SILENT_PRESET_NAMES.get(key);
+	public static String get(final String key, final HashMap<String, String[]> maps, final String... values) {
+		String[] pre = maps.get(key);
 		String json = pre[0];
 		for (int i = 1; i < pre.length; i++) {
-			json = json.replaceAll("%" + pre[i] + "%", values[i - 1]);
+			json = json.replaceAll("%" + pre[i] + "%", values[i - 1] == null ? "":values[i - 1]);
 		}
 		return json;
 	}

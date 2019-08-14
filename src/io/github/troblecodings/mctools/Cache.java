@@ -39,6 +39,10 @@ public class Cache {
 		}
 		return modid;
 	}
+	
+	public static void updateModid(String str) {
+		modid = str;
+	}
 
 	private static HashMap<Path, JSONObject> getJsons(@Nullable HashMap<Path, JSONObject> map, final Path path)
 			throws Throwable {
