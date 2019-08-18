@@ -12,6 +12,7 @@ import io.github.troblecodings.mctools.UIApp;
 import io.github.troblecodings.mctools.jfxtools.SearchAbleHandler;
 import io.github.troblecodings.mctools.jfxtools.StyledButton;
 import io.github.troblecodings.mctools.jfxtools.StyledLabel;
+import io.github.troblecodings.mctools.jfxtools.dialog.CreateItemDialog;
 import io.github.troblecodings.mctools.jfxtools.dialog.CreationDialog;
 import io.github.troblecodings.mctools.jfxtools.dialog.ExceptionDialog;
 import io.github.troblecodings.mctools.jfxtools.dialog.InfoDialog;
@@ -99,7 +100,8 @@ public class ItemScene extends BasicScene {
 
 		StyledButton additem = new StyledButton("Add item");
 		additem.setOnAction(evt -> {
-
+			CreateItemDialog dialog = new CreateItemDialog();
+			dialog.showAndWait();
 		});
 		pane.add(additem, 1, 2);
 	}

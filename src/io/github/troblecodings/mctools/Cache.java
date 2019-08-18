@@ -23,7 +23,11 @@ public class Cache {
 	private static Path langPath = null;
 	private static Path itemPath = null;
 	private static Path itemTexturePath = null;
+	private static Path blockPath = null;
+	private static Path blockTexturePath = null;
+	private static Path blockstatePath = null;
 	private static Path itemDataPath = null;
+	private static Path blockDataPath = null;
 
 	private static String modid = null;
 	private static ArrayList<String> langKeys = null;
@@ -138,6 +142,10 @@ public class Cache {
 	public static Path getItemDataPath() throws Throwable {
 		return itemDataPath = getInternalPath(itemDataPath, "data\\item");
 	}
+	
+	public static Path getBlockDataPath() throws Throwable {
+		return blockDataPath = getInternalPath(blockDataPath, "data\\block");
+	}
 
 	public static Path getLangPath() throws Throwable {
 		return langPath = getPath(langPath, "lang");
@@ -146,10 +154,23 @@ public class Cache {
 	public static Path getItemPath() throws Throwable {
 		return itemPath = getPath(itemPath, "models\\item");
 	}
-
+	
 	public static Path getItemTexturePath() throws Throwable {
 		return itemTexturePath = getPath(itemTexturePath, "textures\\item");
 	}
+	
+	public static Path getBlockTexturePath() throws Throwable {
+		return blockTexturePath = getPath(blockTexturePath, "textures\\block");
+	}
+
+	public static Path getBlockPath() throws Throwable {
+		return blockPath = getPath(blockPath, "models\\block");
+	}
+
+	public static Path getBlockstatesPath() throws Throwable {
+		return blockstatePath = getPath(blockstatePath, "blockstates");
+	}
+
 
 /// CLEAR SECTION
 
@@ -172,6 +193,19 @@ public class Cache {
 	public static void clearItemTexturePath() {
 		itemTexturePath = null;
 	}
+	
+	public static void clearBlockPath() {
+		blockPath = null;
+	}
+
+	public static void clearBlockTexturePath() {
+		blockTexturePath = null;
+	}
+	
+	public static void clearBlockstatesPath() {
+		blockstatePath = null;
+	}
+
 
 	public static void clearModIDCache() {
 		modid = null;
@@ -187,5 +221,8 @@ public class Cache {
 		clearLangPath();
 		clearItemPath();
 		clearItemTexturePath();
+		clearBlockPath();
+		clearBlockTexturePath();
+		clearBlockstatesPath();
 	}
 }

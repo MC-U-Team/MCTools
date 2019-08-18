@@ -38,6 +38,8 @@ public class CreateItemDialog extends Dialog<String> {
 		final CheckBox addLangKey = new CheckBox("Add language key");
 		addLangKey.setSelected(true);
 		pane.add(addLangKey, 0, 1);
+		
+		this.getDialogPane().setContent(pane);
 
 		this.setResultConverter(btn -> {
 			final String namestr = name.getText();
@@ -54,13 +56,12 @@ public class CreateItemDialog extends Dialog<String> {
 					obj.write(writer, 1, 1);
 					
 					if(addLangKey.isSelected()) {
-						Cache.addLangKey(namestr);
+						Cache.addLangKey("item." + Cache.getModID() + ":" + namestr + ".name");
 						Cache.flushLangJsons();
 					}
 					
 					if (generateModels.isSelected()) {
-						String[] arr = new String[] { Cache.getModID(), namestr };
-						String json = Presets.get("itemgenerated", Presets.ITEM_PRESETS, arr);
+						String json = Presets.get("itemgenerated", Presets.ITEM_PRESETS, Cache.getModID(), namestr);
 						Path pth2 = Paths.get(Cache.getItemPath().toString(), namestr + ".json");
 						Cache.addItemJson(pth2, json);
 						Files.write(pth2, json.getBytes());
